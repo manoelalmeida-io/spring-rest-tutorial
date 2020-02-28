@@ -10,10 +10,22 @@ import org.springframework.context.annotation.Configuration;
 public class LoadDatabase {
 
     @Bean
-    CommandLineRunner initDatabase (EmployeeRepository repository) {
+    CommandLineRunner initDatabase (EmployeeRepository employeeRepository, OrderRepository orderRepository) {
+
+        employeeRepository.save(new Employee("Bilbo","Baggins", "Burglar"));
+        employeeRepository.save(new Employee("Frodo","Baggins", "Thief"));
+
+        orderRepository.save(new Order("MacBook Pro", Status.COMPLETED));
+        orderRepository.save(new Order("iPhone", Status.IN_PROGRESS));
+
         return args -> {
-            log.info("Preloading " + repository.save(new Employee("Bilbo Baggins", "Burglar")));
-            log.info("Preloading " + repository.save(new Employee("Frodo Baggins", "Thief")));
+            employeeRepository.findAll().forEach(order -> {
+                log.info("Preloaded " + order);
+            });
+
+            orderRepository.findAll().forEach(order -> {
+                log.info("Preloaded " + order);
+            });
         };
     }
 }
